@@ -16,6 +16,15 @@ pipeline {
         )
 
     }
+    
+    stages {
+        stage('Checkout Source') {
+            steps {
+                sh 'python3 --version'
+                sh 'pip3 install boto3'
+                checkout([$class: 'GitSCM', branches: [[name: "*/main"]], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: "https://github.com/JagamohanPanigrahi/Myfirstcode/blob/0b48ec0b459575c483031684b7eb5be607fe87f4/mainscript.sh"]]])
+            }
+        }
  
     stages {
         stage('Input') {
