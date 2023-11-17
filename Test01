@@ -1,0 +1,69 @@
+pipeline {
+    agent any
+
+    parameters {
+        choice(
+            name: 'ENVIRONMENT',
+            choices: ['deltekdev', 'dco', 'flexplus', 'costpoint', 'goss'],
+            description: 'AWS Account'
+        )
+        choice(
+            name: 'REGION',
+            choices: ['us-east-1', 'us-west-2', 'eu-west-1', 'eu-central-1', 'ap-southeast-1', 'ap-southeast-2'],
+            description: 'Instance region'
+        )
+        string(name: 'AMI_ID', defaultValue: '', description: 'Enter the AMI ID')
+    }
+
+    stages {
+        stage('Input') {
+            steps {
+                script {
+                    def ami_id = params.AMI_ID
+                    def region = params.REGION // Fixed the typo in the parameter name
+
+                    def awsCredential = ""
+                    def account = ""
+
+                    switch (params.ENVIRONMENT) {
+                        case 'deltekdev':
+                            awsCredential = "infra-at-dev"
+                            account = "343866166964"
+                            println "Setting up for deltekdev environment"
+                            // Code logic for 'infra-at-dev' case
+                            break
+                        case 'dco':
+                            awsCredential = "infra-at-dco"
+                            account = "463061647317"
+                            println "Setting up for dco environment"
+                            break
+                        case 'flexplus':
+                            awsCredential = "infra-at-flexplus"
+                            account = "363912313913"
+                            println "Setting up for flexplus environment"
+                            break
+                        case 'costpoint':
+                            awsCredential = "infra-at-costpoint"
+                            account = "389812532864"
+                            println "Setting up for costpoint environment"
+                            break
+                        case 'goss':
+                            awsCredential = "infra-at-oss"
+                            account = "364370348307"
+                            println "Setting up for goss environment"
+                            break
+                        default:
+                            // Code logic for other cases
+                            break
+                    }
+
+                    withCredentials([
+                        [$class: 'AmazonWebServicesCredentialsBinding', credentialsId: awsCredential, accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']
+                    ]) {
+                        sh "./mainscript.sh"
+                    }
+                }
+            }
+        }
+    }
+}
