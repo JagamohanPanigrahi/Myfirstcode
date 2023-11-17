@@ -1,7 +1,6 @@
 pipeline {
     agent any
-    
-    
+
     parameters {
             choice(
             name: 'ENVIRONMENT',
@@ -14,24 +13,20 @@ pipeline {
             description: 'Instance region'
         )
             string(name: 'AMI_ID', defaultValue: '', description: 'Enter the AMI ID'
-            
         )
-           
-          
-    }
 
+    }
+ 
     stages {
         stage('Input') {
             steps {
                 script {
-                    
                     def ami_id = "${params.AMI_ID}"
                     def region ="${params.REGIONS}"
-                    def region = REGIONS.split(',')
+                   //def region = REGIONS.split(',')
                     def awsCredential = ""
                     def environment = "${params.ENVIRONMENT}"
-                      
-                    
+
                     switch (environment) {
                             case 'deltekdev':
                                 awsCredential = "infra-at-dev"
@@ -63,14 +58,14 @@ pipeline {
                                 // Code logic for other cases
                                 break
                         }
-                        
                  withCredentials([
                             [$class: 'AmazonWebServicesCredentialsBinding', credentialsId: awsCredential, accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']
                         ]) {
-
-                            sh ./mainscript.sh
+ 
+                            sh "./mainscript.sh"
+                        }
                 }
             }
         }
-    
-    
+    }
+}
