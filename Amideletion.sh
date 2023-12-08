@@ -1,47 +1,28 @@
 #!/bin/bash
 
+# Input parameters
+AWS_AMI_ID=$1
+AWS_REGION=$2
 
-check_ami_status() {
-    local ami_id=$1
-    local region=$2
+# Check if the AMI ID is provided
+if [ -z "$AWS_AMI_ID" ]; then
+    echo "Error: AMI ID is not provided."
+    exit 1
+fi
 
-    echo "Checking status of AMI $ami_id in region $region..."
-    status=$(aws ec2 describe-images --image-ids $ami_id --region $region --query 'Images[0].State' --output text 2>&1)
+# Check if the AWS region is provided
+if [ -z "$AWS_REGION" ]; then
+    echo "Error: AWS region is not provided."
+    exit 1
+fi
 
-    echo "Checking status of AMI $status"
-    
-    if [[ $status == "Available" ]]; then
-        echo "AMI $ami_id is available in region $region."
-        return 0
-    else
-        echo "AMI $ami_id is not available in region $region or does not exist."
-        return 1
-    fi
-}
+echo "Deleting AMI $AWS_AMI_ID in region $AWS_REGION..."
+aws ec2 deregister-image --image-id $AWS_AMI_ID --region $AWS_REGION
 
-# Function to delete the AMI in a region
-delete_ami() {
-    local ami_id=$1
-    local region=$2
-
-    echo "Deleting AMI $ami_id in region $region..."
-    aws ec2 deregister-image --image-id $ami_id --region $region
-    echo "AMI $ami_id has been deleted in region $region."
-}
-
-
-read -p "Enter the AMI ID: " ami_id
-read -p "Enter the regions (comma-separated, e.g., us-west-1,us-east-2): " regions_input
-
-
-IFS=',' read -r -a regions <<< "$regions_input"
-
-
-for region in "${regions[@]}"
-do
-    if check_ami_status $ami_id $region; then
-        delete_ami $ami_id $region
-    else
-        echo "Skipping deletion in region $region as AMI $ami_id is not available."
-    fi
-done
+# Check if the deregister-image command was successful
+if [ $? -eq 0 ]; then
+    echo "AMI $AWS_AMI_ID has been deleted in region $AWS_REGION."
+else
+    echo "Error deleting AMI $AWS_AMI_ID in region $AWS_REGION."
+    exit 1
+fi
