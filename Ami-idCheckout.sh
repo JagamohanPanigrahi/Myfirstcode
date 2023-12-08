@@ -1,26 +1,27 @@
-!/bin/bash
-#
-# Check the status of an AWS AMI
+#!/bin/bash
 
-# Set your AWS region and AMI ID
-region="$AWS_REGION"
-ami_id="$AWS_AMI_ID"
+# Input parameters
+AWS_AMI_ID=$1
+AWS_REGION=$2
 
-# Check if the AMI ID is provided
-if [ -z "$ami_id" ]; then
+# Validate input parameters
+if [ -z "$AWS_AMI_ID" ]; then
     echo "Error: AMI ID is not provided."
     exit 1
 fi
 
-# Check the status of the AMI
-status=$(aws ec2 describe-images --image-ids $ami_id --region $region --query 'Images[0].State' --output text 2>&1)
+if [ -z "$AWS_REGION" ]; then
+    echo "Error: AWS region is not provided."
+    exit 1
+fi
+
+# AWS CLI command to check the status of the specified AMI
+status=$(aws ec2 describe-images --image-ids "$AWS_AMI_ID" --region "$AWS_REGION" --query 'Images[0].State' --output text 2>&1)
 
 # Check if the describe-images command was successful
 if [ $? -eq 0 ]; then
-    echo "Status of AMI $ami_id in region $region: $status"
+    echo "Status of AMI $AWS_AMI_ID in region $AWS_REGION: $status"
 else
-    echo "Error describing AMI $ami_id in region $region: $status"
+    echo "Error describing AMI $AWS_AMI_ID in region $AWS_REGION: $status"
+    exit 1
 fi
-
-    #export AMI_STATUS=$status
-
