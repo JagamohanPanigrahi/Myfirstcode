@@ -3,8 +3,8 @@
 # Check the status of an AWS AMI
 
 # Set your AWS region and AMI ID
-region="$AWS_REGION"
-ami_id="$AWS_AMI_ID"
+#region="$AWS_REGION"
+#ami_id="$AWS_AMI_ID"
 
 # Check if the AMI ID is provided
 if [ -z "$ami_id" ]; then
