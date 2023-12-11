@@ -21,7 +21,7 @@ status=$(aws ec2 describe-images --image-ids "$AWS_AMI_ID" --region "$AWS_REGION
 
 
 if [[ "$status -eq "Available" ]]; then
-    echo "$AWS_AMI_ID in region $AWS_REGION: $status"
+    echo "$AWS_AMI_ID inregion $AWS_REGION: $status"
 else
     echo "Error describing AMI $AWS_AMI_ID in region $AWS_REGION: $status"
     exit 1
