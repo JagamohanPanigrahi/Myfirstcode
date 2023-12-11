@@ -15,12 +15,10 @@ if [ -z "$AWS_REGION" ]; then
     exit 1
 fi
 
-shopt -s nocasematch
-
 status=$(aws ec2 describe-images --image-ids "$AWS_AMI_ID" --region "$AWS_REGION" --query 'Images[0].State' --output text 2>&1)
 
 
-if [[ "$status -eq "Available" ]]; then
+if [[ "$status == "Available" ]]; then
     echo "The AMI is available"
 else
     echo "Error describing AMI $AWS_AMI_ID in region $AWS_REGION: $status"
