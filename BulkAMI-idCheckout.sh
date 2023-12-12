@@ -4,7 +4,7 @@ CSV_FILE=$1
 AWS_REGION=$2
 
 if [ -z "$CSV_FILE" ]; then
-    echo "Error: AMI ID is not provided."
+    echo "Error: CSV file path is not provided."
     exit 1
 fi
 
@@ -15,8 +15,11 @@ fi
 
 shopt -s nocasematch
 
-while IFS=, read -r AWS_AMI_ID
-do
+while IFS=, read -r AWS_AMI_ID || [[ -n "$AWS_AMI_ID" ]]; do
+    if [ -z "$AWS_AMI_ID" ]; then
+        continue  # Skip empty lines
+    fi
+
     status=$(aws ec2 describe-images --image-ids "$AWS_AMI_ID" --region "$AWS_REGION" --query 'Images[0].State' --output text 2>&1)
 
     if [[ "$status" == "Available" ]]; then
