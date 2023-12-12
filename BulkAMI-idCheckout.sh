@@ -1,10 +1,10 @@
 #!/bin/bash
 
-CSV_FILE=$1
+AWS_AMI_ID=$1
 AWS_REGION=$2
 
-if [ -z "$CSV_FILE" ]; then
-    echo "Error: CSV file path is not provided."
+if [ -z "$AWS_AMI_ID" ]; then
+    echo "Error: AMI ID is not provided."
     exit 1
 fi
 
