@@ -24,4 +24,4 @@ do
     else
         echo "Error describing AMI $AWS_AMI_ID in region $AWS_REGION: $status"
     fi
-done < "$CSV_FILE
+done < "$CSV_FILE"
