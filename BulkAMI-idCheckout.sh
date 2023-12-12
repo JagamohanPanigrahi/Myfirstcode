@@ -1,9 +1,9 @@
 #!/bin/bash
 
-AWS_AMI_ID=$1
+CSV_FILE=$1
 AWS_REGION=$2
 
-if [ -z "$AWS_AMI_ID" ]; then
+if [ -z "$CSV_FILE" ]; then
     echo "Error: AMI ID is not provided."
     exit 1
 fi
