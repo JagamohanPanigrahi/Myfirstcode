@@ -17,7 +17,7 @@ shopt -s nocasematch
 
 while IFS=, read -r CSV_FILE || [[ -n "$CSV_FILE" ]]; do
     if [ -z "$CSV_FILE" ]; then
-        continue  # Skip empty lines
+        continue  
     fi
 
     # Check if the AMI ID is well-formed before making the API call
