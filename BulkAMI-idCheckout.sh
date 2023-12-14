@@ -19,13 +19,7 @@ while IFS=, read -r ami_id || [[ -n "$ami_id" ]]; do
     if [ -z "$ami_id" ]; then
         continue
     fi
-
-    # Check if the AMI ID is well-formed before making the API call
-    if [[ ! "$ami_id" =~ ^ami-[a-fA-F0-9]{8,}$ ]]; then
-        echo "Error: Invalid AMI ID format for $ami_id. Skipping..."
-        continue
-    fi
-
+   
     status=$(aws ec2 describe-images --image-ids "$ami_id" --region "$AWS_REGION" --query 'Images[0].State' --output text 2>&1)
 
     if [ $? -eq 0 ]; then
