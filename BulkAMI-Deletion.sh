@@ -6,7 +6,7 @@ AWS_REGION=$2
 shopt -s nocasematch
 
 while IFS=, read -r ami_id || [[ -n "$ami_id" ]]; do
-    ami_id=$(trim "$ami_id")
+    ami_id=$("$ami_id")
 
     if [ -z "$ami_id" ]; then
         continue
