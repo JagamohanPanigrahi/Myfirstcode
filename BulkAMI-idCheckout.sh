@@ -38,5 +38,6 @@ while IFS=, read -r ami_id || [[ -n "$ami_id" ]]; do
         echo "Status of AMI $ami_id in region $AWS_REGION: $status"
     else
         echo "Error describing AMI $ami_id in region $AWS_REGION. error message: $status"
+        exit 1
     fi
 done < "$CSV_FILE"
