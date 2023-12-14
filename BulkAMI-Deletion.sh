@@ -3,15 +3,20 @@
 CSV_FILE=$1
 AWS_REGION=$2
 
+trim() {
+    echo "$1" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//'
+}
+
 shopt -s nocasematch
 
 while IFS=, read -r ami_id || [[ -n "$ami_id" ]]; do
+    ami_id=$(trim "$ami_id")
+
     if [ -z "$ami_id" ]; then
         continue
     fi
 
-    # Check if the AMI ID is well-formed before making the API call
-    if [[ ! "$ami_id" =~ ^ami-[a-fA-F0-9]+$ ]]; then
+    if [[ ! "$ami_id" =~ ^ami-[a-fA-F0-9]{8,}$ ]]; then
         echo "Error: Invalid AMI ID format for $ami_id. Skipping...this job"
         continue
     fi
