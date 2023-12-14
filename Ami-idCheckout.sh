@@ -1,10 +1,10 @@
 #!/bin/bash
 
-AWS_AMI_ID=$1
+CSV_FILE=$1
 AWS_REGION=$2
 
-if [ -z "$AWS_AMI_ID" ]; then
-    echo "Error: AMI ID is not provided."
+if [ -z "$CSV_FILE" ]; then
+    echo "Error: CSV file path is not provided."
     exit 1
 fi
 
@@ -15,11 +15,25 @@ fi
 
 shopt -s nocasematch
 
-status=$(aws ec2 describe-images --image-ids "$AWS_AMI_ID" --region "$AWS_REGION" --query 'Images[0].State' --output text 2>&1)
+while IFS=, read -r ami_id || [[ -n "$ami_id" ]]; do
+    # Trim leading and trailing whitespace from AMI ID
+    ami_id=$(echo "$ami_id" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')
 
-if [[ "$status" == "Available" ]]; then
-    echo "Status of AMI $AWS_AMI_ID in region $AWS_REGION: $status"
-else
-    echo "Error describing AMI $AWS_AMI_ID in region $AWS_REGION: $status"
-    exit 1
-fi
+    if [ -z "$ami_id" ]; then
+        continue
+    fi
+
+    # Check if the AMI ID is well-formed before making the API call
+    if [[ ! "$ami_id" =~ ^ami-[a-fA-F0-9]{8,}$ ]]; then
+        echo "Error: Invalid AMI ID format for $ami_id. Skipping..."
+        continue
+    fi
+
+    status=$(aws ec2 describe-images --image-ids "$ami_id" --region "$AWS_REGION" --query 'Images[0].State' --output text 2>&1)
+
+    if [ $? -eq 0 ]; then
+        echo "Status of AMI $ami_id in region $AWS_REGION: $status"
+    else
+        echo "Error describing AMI $ami_id in region $AWS_REGION. AWS CLI error message: $status"
+    fi
+done < "$CSV_FILE"
