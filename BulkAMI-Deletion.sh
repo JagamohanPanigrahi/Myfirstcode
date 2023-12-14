@@ -26,3 +26,4 @@ else
     echo "Error deleting AMI $CSV_FILE in region $AWS_REGION."
     exit 1
 fi
+done < "$CSV_FILE"
