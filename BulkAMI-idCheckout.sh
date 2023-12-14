@@ -36,4 +36,4 @@ while IFS=, read -r ami_id || [[ -n "$ami_id" ]]; do
     else
         echo "Error describing AMI $ami_id in region $AWS_REGION. AWS CLI error message: $status"
     fi
-
+done
