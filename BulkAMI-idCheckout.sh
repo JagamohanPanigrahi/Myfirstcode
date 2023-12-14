@@ -34,7 +34,7 @@ while IFS=, read -r ami_id || [[ -n "$ami_id" ]]; do
 
     status=$(aws ec2 describe-images --image-ids "$ami_id" --region "$AWS_REGION" --query 'Images[0].State' --output text 2>&1)
 
-    if [ $? -eq 0 ]; then
+    if [ "$state" == "available" ]; then
         echo "Status of AMI $ami_id in region $AWS_REGION: $status"
     else
         echo "Error describing AMI $ami_id in region $AWS_REGION. error message: $status"
