@@ -22,12 +22,12 @@ while IFS=, read -r ami_id || [[ -n "$ami_id" ]]; do
     fi
 
     echo "Deleting AMI $ami_id in region $AWS_REGION..."
-    status=$(aws ec2 deregister-image --image-ids "$ami_id" --region "$AWS_REGION" --query 'Images[0].State' --output text 2>&1)
+    status=$(aws ec2 deregister-image --image-ids "$ami_id" --region "$AWS_REGION" 2>&1)
 
     if [ $? -eq 0 ]; then
         echo "AMI $ami_id has been deleted in region $AWS_REGION."
     else
-        echo "Error deleting AMI $ami_id in region $AWS_REGION."
-        exit 1
+        echo "Error deleting AMI $ami_id in region $AWS_REGION. Error message: $status"
+        
     fi
 done < "$CSV_FILE"
