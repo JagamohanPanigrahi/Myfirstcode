@@ -21,6 +21,14 @@ while IFS=, read -r ami_id || [[ -n "$ami_id" ]]; do
         continue
     fi
 
+    # Check the state of the AMI before attempting to deregister
+    state=$(aws ec2 describe-images --image-ids "$ami_id" --region "$AWS_REGION" --query 'Images[0].State' --output text 2>&1)
+
+    if [ "$state" != "available" ]; then
+        echo "Skipping AMI $ami_id in region $AWS_REGION as it is not in 'Available' state."
+        continue
+    fi
+
     echo "Deleting AMI $ami_id in region $AWS_REGION..."
     status=$(aws ec2 deregister-image --image-id "$ami_id" --region "$AWS_REGION" 2>&1)
 
@@ -28,6 +36,6 @@ while IFS=, read -r ami_id || [[ -n "$ami_id" ]]; do
         echo "AMI $ami_id has been deleted in region $AWS_REGION."
     else
         echo "Error deleting AMI $ami_id in region $AWS_REGION. Error message: $status"
-        exit 1 
+        exit 1
     fi
 done < "$CSV_FILE"
