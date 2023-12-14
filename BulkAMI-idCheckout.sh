@@ -15,22 +15,22 @@ fi
 
 shopt -s nocasematch
 
-while IFS=, read -r CSV_FILE || [[ -n "$CSV_FILE" ]]; do
-    if [ -z "$CSV_FILE" ]; then
-        continue  
-    fi
-
-    # Check if the AMI ID is well-formed before making the API call
-    if [[ ! "$CSV_FILE" =~ ^ami-[a-fA-F0-9]{8,}$ ]]; then
-        echo "Error: Invalid AMI ID format for $CSV_FILE. Skipping..."
+while IFS=, read -r ami_id || [[ -n "$ami_id" ]]; do
+    if [ -z "$ami_id" ]; then
         continue
     fi
 
-    status=$(aws ec2 describe-images --image-ids "$v" --region "$AWS_REGION" --query 'Images[0].State' --output text 2>&1)
+    # Check if the AMI ID is well-formed before making the API call
+    if [[ ! "$ami_id" =~ ^ami-[a-fA-F0-9]{8,}$ ]]; then
+        echo "Error: Invalid AMI ID format for $ami_id. Skipping..."
+        continue
+    fi
+
+    status=$(aws ec2 describe-images --image-ids "$ami_id" --region "$AWS_REGION" --query 'Images[0].State' --output text 2>&1)
 
     if [ $? -eq 0 ]; then
-        echo "Status of AMI $CSV_FILE in region $AWS_REGION: $status"
+        echo "Status of AMI $ami_id in region $AWS_REGION: $status"
     else
-        echo "Error describing AMI $CSV_FILE in region $AWS_REGION. AWS CLI error message: $status"
+        echo "Error describing AMI $ami_id in region $AWS_REGION. AWS CLI error message: $status"
     fi
 done < "$CSV_FILE"
