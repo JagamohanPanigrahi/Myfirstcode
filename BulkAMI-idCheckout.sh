@@ -3,6 +3,11 @@
 CSV_FILE=$1
 AWS_REGION=$2
 
+# Function to trim leading and trailing whitespace
+trim() {
+    echo "$1" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//'
+}
+
 if [ -z "$CSV_FILE" ]; then
     echo "Error: CSV file path is not provided."
     exit 1
@@ -16,8 +21,7 @@ fi
 shopt -s nocasematch
 
 while IFS=, read -r ami_id || [[ -n "$ami_id" ]]; do
-    # Trim leading and trailing whitespace from AMI ID
-    ami_id=$(echo "$ami_id" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')
+    ami_id=$(trim "$ami_id")
 
     if [ -z "$ami_id" ]; then
         continue
@@ -36,4 +40,4 @@ while IFS=, read -r ami_id || [[ -n "$ami_id" ]]; do
     else
         echo "Error describing AMI $ami_id in region $AWS_REGION. AWS CLI error message: $status"
     fi
-done
+done < "$CSV_FILE"
