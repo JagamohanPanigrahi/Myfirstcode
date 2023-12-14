@@ -36,7 +36,7 @@ while IFS=, read -r ami_id || [[ -n "$ami_id" ]]; do
     if [ "$status" == "available" ]; then
         echo "Status of AMI $ami_id in region $AWS_REGION: $status"
     else
-        echo "Error describing AMI $ami_id in region $AWS_REGION. error message: $status"
+        echo "Error describing AMI $ami_id in region $AWS_REGION. AMI State is: $status"
         exit 1
     fi
 fi
