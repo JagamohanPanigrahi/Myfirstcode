@@ -6,12 +6,12 @@ AWS_REGION=$2
 shopt -s nocasematch
 
 while IFS=, read -r ami_id || [[ -n "$ami_id" ]]; do
-   
     if [ -z "$ami_id" ]; then
         continue
     fi
 
-    if [[ ! "$ami_id" =~ ^ami-[a-fA-F0-9]{8,}$ ]]; then
+    # Check if the AMI ID is well-formed before making the API call
+    if [[ ! "$ami_id" =~ ^ami-[a-fA-F0-9]+$ ]]; then
         echo "Error: Invalid AMI ID format for $ami_id. Skipping...this job"
         continue
     fi
