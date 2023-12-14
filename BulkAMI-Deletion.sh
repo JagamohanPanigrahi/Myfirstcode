@@ -28,6 +28,6 @@ while IFS=, read -r ami_id || [[ -n "$ami_id" ]]; do
         echo "AMI $ami_id has been deleted in region $AWS_REGION."
     else
         echo "Error deleting AMI $ami_id in region $AWS_REGION. Error message: $status"
-        
+        exit 1 
     fi
 done < "$CSV_FILE"
