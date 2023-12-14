@@ -26,9 +26,9 @@ while IFS=, read -r ami_id || [[ -n "$ami_id" ]]; do
 
     if [ "$state" != "available" ]; then
         echo "Skipping AMI $ami_id in region $AWS_REGION as it is not in 'Available' state."
-        continue
-    fi
-
+        exit 1
+    else
+    
     echo "Deleting AMI $ami_id in region $AWS_REGION..."
     status=$(aws ec2 deregister-image --image-id "$ami_id" --region "$AWS_REGION" 2>&1)
 
