@@ -3,7 +3,7 @@
 CSV_FILE=$1
 AWS_REGION=$2
 
-# Function to trim leading and trailing whitespace
+
 trim() {
     echo "$1" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//'
 }
@@ -27,9 +27,8 @@ while IFS=, read -r ami_id || [[ -n "$ami_id" ]]; do
         continue
     fi
 
-    # Check if the AMI ID is well-formed before making the API call
     if [[ ! "$ami_id" =~ ^ami-[a-fA-F0-9]{8,}$ ]]; then
-        echo "Error: Invalid AMI ID format for $ami_id. Skipping..."
+        echo "Error: Invalid AMI ID format for $ami_id. Skipping...this job"
         continue
     fi
 
@@ -38,6 +37,6 @@ while IFS=, read -r ami_id || [[ -n "$ami_id" ]]; do
     if [ $? -eq 0 ]; then
         echo "Status of AMI $ami_id in region $AWS_REGION: $status"
     else
-        echo "Error describing AMI $ami_id in region $AWS_REGION. AWS CLI error message: $status"
+        echo "Error describing AMI $ami_id in region $AWS_REGION. error message: $status"
     fi
 done < "$CSV_FILE"
