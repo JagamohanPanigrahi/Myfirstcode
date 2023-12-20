@@ -3,7 +3,6 @@
 CSV_FILE=$1
 AWS_REGION=$2
 
-
 trim() {
     echo "$1" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//'
 }
@@ -31,13 +30,18 @@ while IFS=, read -r ami_id || [[ -n "$ami_id" ]]; do
         echo "Error: Invalid AMI ID format for $ami_id. Skipping...this job"
         exit 1
     else
-    status=$(aws ec2 describe-images --image-ids "$ami_id" --region "$AWS_REGION" --query 'Images[0].State' --output text 2>&1)
+        result=$(aws ec2 describe-images --image-ids "$ami_id" --region "$AWS_REGION" \
+                 --query 'Images[0].[State,Name]' --output text 2>&1)
 
-    if [ "$status" == "available" ]; then
-        echo "Status of AMI $ami_id in region $AWS_REGION: $status"
-    else
-        echo "Error describing AMI $ami_id in region $AWS_REGION. AMI State is: $status"
-        exit 1
+        status=$(echo "$result" | awk '{print $1}')
+        name=$(echo "$result" | awk '{print $2}')
+
+        if [ "$status" == "available" ]; then
+            echo "Status of AMI $ami_id in region $AWS_REGION: $status"
+            echo "Name of AMI $ami_id: $name"
+        else
+            echo "Error describing AMI $ami_id in region $AWS_REGION. AMI State is: $status"
+            exit 1
+        fi
     fi
-fi
 done < "$CSV_FILE"
