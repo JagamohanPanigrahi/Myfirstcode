@@ -1,10 +1,6 @@
 #!/bin/bash
 
-# Read CSV_FILE as a multi-line string
-read -r -d '' CSV_FILE <<EOF
-$1
-EOF
-
+CSV_FILE=$1
 AWS_REGION=$2
 
 trim() {
@@ -23,7 +19,6 @@ fi
 
 shopt -s nocasematch
 
-# Use a while loop to read each line of the CSV_FILE
 while IFS=, read -r ami_id || [[ -n "$ami_id" ]]; do
     ami_id=$(trim "$ami_id")
 
@@ -35,7 +30,6 @@ while IFS=, read -r ami_id || [[ -n "$ami_id" ]]; do
         echo "Error: Invalid AMI ID format for $ami_id. Skipping...this job"
         exit 1
     else
-        # Process each AMI ID
         result=$(aws ec2 describe-images --image-ids "$ami_id" --region "$AWS_REGION" \
                  --query 'Images[0].[State,Name]' --output text 2>&1)
 
@@ -50,4 +44,4 @@ while IFS=, read -r ami_id || [[ -n "$ami_id" ]]; do
             exit 1
         fi
     fi
-done <<< "$CSV_FILE"
+done < "$CSV_FILE"
