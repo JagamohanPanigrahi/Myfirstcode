@@ -5,11 +5,8 @@ read -r -d '' CSV_FILE <<EOF
 $1
 EOF
 
+
 AWS_REGION=$2
-
-echo "DEBUG: AWS_REGION is $AWS_REGION"
-echo "DEBUG: CSV_FILE is $CSV_FILE"
-
 
 trim() {
     echo "$1" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//'
