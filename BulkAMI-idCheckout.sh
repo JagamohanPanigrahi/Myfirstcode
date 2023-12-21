@@ -1,6 +1,11 @@
 #!/bin/bash
 
-CSV_FILE=$1
+# Read CSV_FILE as a multi-line string
+read -r -d '' CSV_FILE <<EOF
+$1
+EOF
+
+
 AWS_REGION=$2
 
 trim() {
@@ -44,4 +49,4 @@ while IFS=, read -r ami_id || [[ -n "$ami_id" ]]; do
             exit 1
         fi
     fi
-done < "$CSV_FILE"
+done <<< "$CSV_FILE"
