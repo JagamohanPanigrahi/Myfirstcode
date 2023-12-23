@@ -1,7 +1,7 @@
 #!/bin/bash
 
 CSV_FILE="$1"
-AWS_REGIONS=("us-east-1" "us-west-2" "eu-west-1")  # Add your desired AWS regions to this array
+REGIONS=("us-east-1" "us-west-2" "eu-west-1 " "eu-central-1" "ap-southeast-1" "ap-southeast-2")  # Add your desired AWS regions to this array
 
 trim() {
     echo "$1" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//'
@@ -27,7 +27,7 @@ while IFS= read -r ami_id || [[ -n "$ami_id" ]]; do
     else
         success=false
 
-        for region in "${AWS_REGIONS[@]}"; do
+        for region in "${REGIONS[@]}"; do
             result=$(aws ec2 describe-images --image-ids "$ami_id" --region "$region" \
                      --query 'Images[0].[State,Name]' --output text 2>&1)
 
