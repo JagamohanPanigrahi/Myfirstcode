@@ -1,7 +1,7 @@
 #!/bin/bash
 
-CSV_FILE=$1
-AWS_REGION=$2
+CSV_FILE="$1"
+AWS_REGION="$2"
 
 trim() {
     echo "$1" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//'
@@ -19,7 +19,7 @@ fi
 
 shopt -s nocasematch
 
-while IFS=, read -r ami_id || [[ -n "$ami_id" ]]; do
+while IFS= read -r ami_id || [[ -n "$ami_id" ]]; do
     ami_id=$(trim "$ami_id")
 
     if [ -z "$ami_id" ]; then
@@ -44,4 +44,4 @@ while IFS=, read -r ami_id || [[ -n "$ami_id" ]]; do
             exit 1
         fi
     fi
-done < "$CSV_FILE"
+done <<< "$CSV_FILE"
