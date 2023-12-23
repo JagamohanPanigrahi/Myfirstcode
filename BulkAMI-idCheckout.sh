@@ -43,7 +43,7 @@ while IFS= read -r ami_id || [[ -n "$ami_id" ]]; do
         done
 
         if [ "$success" != true ]; then
-            echo "Error describing AMI $ami_id in all regions. AMI State is: $status"
+            echo "Error describing AMI $ami_id in all regions. AMI State is: $result"
             exit 1
         fi
     fi
