@@ -47,4 +47,4 @@ while IFS= read -r ami_id || [[ -n "$ami_id" ]]; do
             exit 1
         fi
     fi
-done < "$CSV_FILE"
+done <<< "$CSV_FILE"
