@@ -9,7 +9,8 @@ trim() {
 
 shopt -s nocasematch
 
-while IFS=, read -r ami_id || [[ -n "$ami_id" ]]; do
+# Loop over each line in the CSV_FILE
+while IFS= read -r ami_id || [[ -n "$ami_id" ]]; do
     ami_id=$(trim "$ami_id")
 
     if [ -z "$ami_id" ]; then
@@ -21,7 +22,6 @@ while IFS=, read -r ami_id || [[ -n "$ami_id" ]]; do
         continue
     fi
 
-    # Check the state of the AMI before attempting to deregister
     state=$(aws ec2 describe-images --image-ids "$ami_id" --region "$AWS_REGION" --query 'Images[0].State' --output text 2>&1)
 
     if [ "$state" != "available" ]; then
@@ -38,4 +38,4 @@ while IFS=, read -r ami_id || [[ -n "$ami_id" ]]; do
             exit 1
         fi
     fi
-done < "$CSV_FILE"
+done <<< "$CSV_FILE"
